@@ -5,16 +5,12 @@
     <title>Chat Rooms</title>
 </head>
 <body>
-    <ul class="sidebar-nav">
-       {% if user.is_authenticated %}
-         <li>Welcome: {{ user.get_username }}</li>
-         <li><a href="{% url 'logout' %}">Logout</a></li>
-       {% else %}
-         <li><a href="{% url 'login' %}?next={{ request.path }}">Login</a></li>
-       {% endif %}
-    </ul>
+    {% include 'chat/partial/sidebar_nav.html' %}
 
     What chat room would you like to enter?<br>
+
+    {% include 'chat/partial/messages.html' %}
+
     <input id="room-name-input" type="text" size="100"><br>
     <input id="room-name-submit" type="button" value="Enter">
 

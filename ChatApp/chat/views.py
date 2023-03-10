@@ -13,9 +13,10 @@ def registration(request):
         form = ChatUserRegistrationForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.success(request, f'Your account has been created. You can log in now!')
+            messages.success(request, 'Congratulations! Your account has been created! To enter Chat App you need to login.')
             return redirect('login')
     else:
+        messages.error(request, 'Unsuccessful registration. Invalid information.')
         form = ChatUserRegistrationForm()
 
     context = {'form': form}

@@ -6,8 +6,12 @@
 </head>
 <body>
     <div>
+        {% include 'chat/partial/sidebar_nav.html' %}
+
         <h3>Registration</h3>
         <hr/>
+        {% include 'chat/partial/messages.html' %}
+
         <form action="" method="POST">
             {% csrf_token %}
             {% for field in form %}

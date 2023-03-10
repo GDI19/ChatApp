@@ -6,8 +6,12 @@
 </head>
 <body>
   <div>
+      {% include 'chat/partial/sidebar_nav.html' %}
+
     <h3>You have logged out!</h3>
     <hr>
+      {% include 'chat/partial/messages.html' %}
+
     <a href="{% url 'login' %}">Login</a><br>
     <a href="{% url 'index' %}">Back to home page</a>
   </div>

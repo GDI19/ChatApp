@@ -6,13 +6,11 @@
 </head>
 <body>
     <div>
-        <h3>To enter Chat App you need login</h3>
+        {% include 'chat/partial/sidebar_nav.html' %}
+
+        <h3>Chat App Login</h3>
         <hr>
-        {% if messages %}
-            {% for message in massages %}
-            <p>{{ message }}</p>
-            {% endfor %}
-        {% endif%}
+        {% include 'chat/partial/messages.html' %}
 
         {% if form.errors %}
             <p style="color: red">Your username and password didn't match. Please try again.</p>

@@ -7,12 +7,23 @@
 <body>
     {% include 'chat/partial/sidebar_nav.html' %}
 
-    <textarea id="chat-log" cols="100" rows="20"></textarea><br>
+    <br>
+    <textarea id="chat-log" cols="100" rows="20">
+        {% if previous_messages %}
+            {% for message in previous_messages%}
+                {{message}}
+            {% endfor%}
+        {% endif %}
+    </textarea><br>
     <input id="chat-message-input" type="text" size="100"><br>
     <input id="chat-message-submit" type="button" value="Send">
     {{ room_name|json_script:'room-name' }}
     {{ request.user.username|json_script:'username' }}
+
     <script>
+        const roomId = {{ room_id }}
+        const userId = {{ request.user.id }}
+
         const roomName = JSON.parse(document.getElementById('room-name').textContent);
         const username = JSON.parse(document.getElementById('username').textContent);
 
@@ -52,6 +63,8 @@
             chatSocket.send(JSON.stringify({
                 'message': message,
                 'username': username,
+                'room_id': roomId,
+                'user_id': userId
 
             }));
             messageInputDom.value = '';

@@ -1,8 +1,12 @@
-<ul class="sidebar-nav">
-       {% if user.is_authenticated %}
-         <li>Welcome: {{ user.get_username }}</li>
-         <li><a href="{% url 'logout' %}">Logout</a></li>
-       {% else %}
-         <li><a href="{% url 'login' %}?next={{ request.path }}">Login</a></li>
-       {% endif %}
-</ul>
+{% if user.is_authenticated %}
+    <div class="alert alert-success" role="alert">
+      <h3>Welcome {{ user.username }}!</h3>
+      <a href="{% url 'logout' %}">Logout</a>
+    </div>
+{% else %}
+    <div class="alert alert-success" role="alert">
+      <h3>Welcome!</h3>
+      <a href="{% url 'register' %}">Signup</a>
+      <a href="{% url 'login' %}">Login</a>
+    </div>
+{% endif %}

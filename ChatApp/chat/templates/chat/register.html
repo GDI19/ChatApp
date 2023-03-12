@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat Registration</title>
+</head>
+<body>
+    <div>
+        {% include 'chat/partial/sidebar_nav.html' %}
+
+        <h3>Registration</h3>
+        <hr/>
+        {% include 'chat/partial/messages.html' %}
+
+        <form action="" method="POST">
+            {% csrf_token %}
+            {% for field in form %}
+            <div>
+                <p>
+                    {{ field.label }}: <br>
+                    {{ field }}
+                </p>
+
+                {% for error in field.errors %}
+                <small style="color: red">{{ error }}</small>
+                {% endfor %}
+            </div>
+            {% endfor %}
+            <button type="submit">Register</button>
+        </form>
+        <p>If you already have an account, <a href="{% url 'login' %}">login</a> instead </p>
+    </div>
+
+</body>
+</html>

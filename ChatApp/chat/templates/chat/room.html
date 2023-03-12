@@ -26,7 +26,13 @@
 
         chatSocket.onmessage = function(e){
             const data = JSON.parse(e.data);
-            document.querySelector('#chat-log').value += (data.username +':  '+ data.message + '\n')
+            let usernameForChat;
+            if (data.username == username){
+                usernameForChat = 'me';
+            }else {
+                usernameForChat = data.username;
+            }
+            document.querySelector('#chat-log').value += (usernameForChat +':  '+ data.message + '\n')
         };
 
         chatSocket.onclose = function(e){
@@ -46,6 +52,7 @@
             chatSocket.send(JSON.stringify({
                 'message': message,
                 'username': username,
+
             }));
             messageInputDom.value = '';
         };

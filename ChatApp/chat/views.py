@@ -36,11 +36,26 @@ def room(request, room_name):
         room_id = created_room.pk
     else:
         room_id = room_name_in_db[0]['id']
-    #all_room_messages = RoomMessage.objects.filter(room=ChatRoom(id=room_id)).values('sender', 'body')
-    #if all_room_messages:
-    #    all_room_messages_json = serializers.serialize('json', all_room_messages)
-    #else:
-    #    all_room_messages_json = {}
-    context = {'room_name': room_name, 'room_id': room_id}
-    #print(all_room_messages)
+
+    all_room_messages = RoomMessage.objects.filter(room=ChatRoom(id=room_id))
+    if all_room_messages:
+        all_room_messages_json = messages_to_json(all_room_messages)
+    else:
+        all_room_messages_json = []
+    print(all_room_messages_json)
+    context = {'room_name': room_name, 'room_id': room_id, 'previous_messages': all_room_messages_json}
+
     return render(request, 'chat/room.html', context)
+
+def messages_to_json(messages):
+    result = []
+    for message in messages:
+        result.append(message_to_json(message))
+    return result
+
+def message_to_json(message):
+    return {
+        'sender': message.sender.username,
+        'body': message.body,
+        'published': str(message.published)
+    }

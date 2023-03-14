@@ -45,7 +45,7 @@ def room(request, room_name):
     print(all_room_messages_json)
     context = {'room_name': room_name, 'room_id': room_id, 'previous_messages': all_room_messages_json}
 
-    return render(request, 'chat/room.html', context)
+    return render(request, 'chat/base.html', context)
 
 def messages_to_json(messages):
     result = []

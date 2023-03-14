@@ -11,7 +11,11 @@
     <textarea id="chat-log" cols="100" rows="20">
         {% if previous_messages %}
             {% for message in previous_messages%}
-                {{message}}
+                {% if message.sender == request.user.username %}
+                    me: {{ message.body }}
+                {% else %}
+                    {{message.sender}}: {{ message.body }}
+                {% endif %}
             {% endfor%}
         {% endif %}
     </textarea><br>

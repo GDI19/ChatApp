@@ -30,6 +30,7 @@ def registration(request):
 @login_required()
 def room(request, room_name):
     room_name_in_db = ChatRoom.objects.filter(name=room_name).values()
+    print(room_name_in_db)
     if not room_name_in_db:
         created_room = ChatRoom(name=room_name)
         created_room.save()
@@ -37,13 +38,7 @@ def room(request, room_name):
     else:
         room_id = room_name_in_db[0]['id']
 
-    all_room_messages = RoomMessage.objects.filter(room=ChatRoom(id=room_id))
-    if all_room_messages:
-        all_room_messages_json = messages_to_json(all_room_messages)
-    else:
-        all_room_messages_json = []
-    print(all_room_messages_json)
-    context = {'room_name': room_name, 'room_id': room_id, 'username': request.user.username,  'previous_messages': all_room_messages_json}
+    context = {'room_name': room_name, 'room_id': room_id, 'username': request.user.username}
 
     return render(request, 'chat/base.html', context)
 

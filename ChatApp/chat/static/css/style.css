@@ -667,3 +667,8 @@ body {
 #frame .content .message-input .wrap button:focus {
   outline: none;
 }
+
+
+.fa {
+  font-size: 1.5em !important;
+}

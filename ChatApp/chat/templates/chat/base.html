@@ -103,14 +103,18 @@ Website: http://emilcarlsson.se/
 		</div>
 		<div class="messages">
 			<ul id="chat-log">
-				<li class="sent">
-					<img src="http://emilcarlsson.se/assets/mikeross.png" alt="" />
-					<p>How the hell am I supposed to get a jury to believe you when I am not even sure that I do?!</p>
-				</li>
-				<li class="replies">
-					<img src="http://emilcarlsson.se/assets/harveyspecter.png" alt="" />
-					<p>When you're backed against the wall, break the god damn thing down.</p>
-				</li>
+				{% if previous_messages %}
+					{% for message in previous_messages %}
+						{% if message.sender == username %}
+							<li class="sent">
+						{% else %}
+							<li class="replies">
+						{% endif %}
+						<img src="http://emilcarlsson.se/assets/mikeross.png" alt="" />
+						<p>{{ message.body }}</p>
+						</li>
+					{% endfor %}
+				{% endif %}
 			</ul>
 		</div>
 		<div class="message-input">

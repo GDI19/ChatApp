@@ -42,7 +42,6 @@ def room(request, room_name):
         all_room_messages_json = messages_to_json(all_room_messages)
     else:
         all_room_messages_json = []
-    print(all_room_messages_json)
     context = {'room_name': room_name, 'room_id': room_id, 'username': request.user.username,  'previous_messages': all_room_messages_json}
 
     return render(request, 'chat/base.html', context)

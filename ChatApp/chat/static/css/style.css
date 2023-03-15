@@ -62,7 +62,7 @@ body {
   line-height: initial;
 }
 #frame #sidepanel #profile.expanded .wrap p {
-  margin-top: 20px;
+  margin-top: 0px;
 }
 #frame #sidepanel #profile.expanded .wrap i.expand-button {
   -moz-transform: scaleY(-1);
@@ -671,4 +671,7 @@ body {
 
 .fa {
   font-size: 1.5em !important;
+}
+.content{
+    padding-bottom: 20px;
 }

@@ -30,7 +30,6 @@ def registration(request):
 @login_required()
 def room(request, room_name):
     room_name_in_db = ChatRoom.objects.filter(name=room_name).values()
-    print(room_name_in_db)
     if not room_name_in_db:
         created_room = ChatRoom(name=room_name)
         created_room.save()

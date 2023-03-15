@@ -103,14 +103,16 @@ Website: http://emilcarlsson.se/
 		</div>
 		<div class="messages">
 			<ul id="chat-log">
+				{% comment %}
 				<li class="sent">
 					<img src="http://emilcarlsson.se/assets/mikeross.png" alt="" />
-					<p>How the hell am I supposed to get a jury to believe you when I am not even sure that I do?!</p>
+					<p>How the hell I do?!</p>
 				</li>
 				<li class="replies">
 					<img src="http://emilcarlsson.se/assets/harveyspecter.png" alt="" />
-					<p>When you're backed against the wall, break the god damn thing down.</p>
+					<p>When down.</p>
 				</li>
+				{% endcomment %}
 			</ul>
 		</div>
 		<div class="message-input">
@@ -124,6 +126,7 @@ Website: http://emilcarlsson.se/
 </div>
 
 	<script src="{% static 'js/bootstrap.js' %}"></script>
+	<script src="{% static 'js/reconnecting-websocket.js' %}"></script>
 
     <script>
         const roomId = {{ room_id }};
@@ -132,7 +135,7 @@ Website: http://emilcarlsson.se/
         const roomName = '{{ room_name}}';
         const username = '{{ username }}';
 
-        const chatSocket = new WebSocket(
+        const chatSocket = new ReconnectingWebSocket(
             'ws://'
             + window.location.host
             + '/ws/chat/'
@@ -140,10 +143,33 @@ Website: http://emilcarlsson.se/
             + '/'
         );
 
+        chatSocket.onopen = function(e){
+        	fetchMessages();
+        };
+
+        function fetchMessages(){
+        	chatSocket.send(JSON.stringify({
+        		'command': 'fetch_messages',
+        		'room_id': roomId
+        	}));
+        };
+
         chatSocket.onmessage = function(e){
             const data = JSON.parse(e.data);
-            let message = data['message'];
-            let author = data['username'];
+
+            if (data['command'] === 'messages' ){
+            	let messages = data['messages']
+            	for (let i = 0; i < messages.length; i++){
+            		createMessage(messages[i]);
+            	}
+            } else if (data['command'] == 'new_message'){
+				createMessage(data);
+            }
+        };
+
+        function createMessage(data){
+            let message = data['body'];
+            let author = data['sender'];
 
             let msgListTag = document.createElement('li');
             let imgTag = document.createElement('img');
@@ -177,6 +203,7 @@ Website: http://emilcarlsson.se/
             const messageInputDom = document.querySelector('#chat-message-input');
             const message = messageInputDom.value;
             chatSocket.send(JSON.stringify({
+            	'command': 'new_message',
                 'message': message,
                 'username': username,
                 'room_id': roomId,

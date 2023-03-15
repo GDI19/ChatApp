@@ -22,6 +22,9 @@ class Message(models.Model):
     published = models.DateTimeField(auto_now_add=True)
     # published.editable = True
 
+    class Meta:
+        ordering = ['-published']
+
     def __str__(self):
         return self.sender.__str__()
 
@@ -33,6 +36,7 @@ class RoomMessage(Message):
         return 'To '+ self.room.name +' from '+ self.sender.__str__()
 
     def get_20_messages(room_id):
-        messages = RoomMessage.objects.filter(room=ChatRoom(id=room_id)).order_by('-published')[:20]
-        return messages
+        messages = RoomMessage.objects.filter(room=ChatRoom(id=room_id))[:20]
+        reversed_messages = reversed(messages)
+        return reversed_messages
 

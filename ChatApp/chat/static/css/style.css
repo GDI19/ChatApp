@@ -675,3 +675,11 @@ body {
 .content{
     padding-bottom: 20px;
 }
+
+.psmall{
+    font-size:9pt;
+    color: aquamarine;
+}
+.replies .psmall{
+    color: cadetblue;
+}

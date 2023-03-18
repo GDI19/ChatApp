@@ -5,12 +5,18 @@ from django.contrib.auth.decorators import login_required
 from django.core import serializers
 
 from .forms import ChatUserRegistrationForm
-from .models import ChatRoom, RoomMessage
+from .models import ChatRoom
 
+
+def get_chat_rooms_list():
+    return ChatRoom.objects.all().values()
 
 @login_required()
 def index(request):
-    return render(request, 'chat/index.html')
+    context = {
+        'chat_rooms_list': get_chat_rooms_list(),
+    }
+    return render(request, 'chat/index.html', context)
 
 def registration(request):
     if request.method == 'POST':
@@ -37,19 +43,12 @@ def room(request, room_name):
     else:
         room_id = room_name_in_db[0]['id']
 
-    context = {'room_name': room_name, 'room_id': room_id, 'username': request.user.username}
+    context = {
+        'room_name': room_name,
+        'room_id': room_id,
+        'username': request.user.username,
+        'chat_rooms_list': get_chat_rooms_list(),
+    }
 
     return render(request, 'chat/room.html', context)
 
-def messages_to_json(messages):
-    result = []
-    for message in messages:
-        result.append(message_to_json(message))
-    return result
-
-def message_to_json(message):
-    return {
-        'sender': message.sender.username,
-        'body': message.body,
-        'published': str(message.published)
-    }

@@ -14,7 +14,7 @@ body {
 }
 
 #frame {
-  width: 95%;
+  width: 100%;
   min-width: 360px;
   max-width: 1000px;
   height: 92vh;
@@ -682,4 +682,18 @@ body {
 }
 .replies .psmall{
     color: cadetblue;
+}
+
+#room-name-input-submit{
+    display: flex;
+    padding: 3pt 13pt;
+}
+
+#room-name-input{
+    width: 100%;
+    min-width: 30pt;
+    }
+
+#room-name-submit{
+    padding: 2pt 10pt
 }

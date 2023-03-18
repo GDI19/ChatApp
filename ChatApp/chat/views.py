@@ -39,7 +39,7 @@ def room(request, room_name):
 
     context = {'room_name': room_name, 'room_id': room_id, 'username': request.user.username}
 
-    return render(request, 'chat/base.html', context)
+    return render(request, 'chat/room.html', context)
 
 def messages_to_json(messages):
     result = []

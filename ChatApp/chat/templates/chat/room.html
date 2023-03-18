@@ -1,35 +1,26 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Chat Room</title>
-</head>
-<body>
-    {% include 'chat/partial/sidebar_nav.html' %}
+{% extends 'base.html' %}
+{% load static %}
 
-    <br>
-    <textarea id="chat-log" cols="100" rows="20">
-        {% if previous_messages %}
-            {% for message in previous_messages%}
-                {% if message.sender == request.user.username %}
-                    me: {{ message.body }}
-                {% else %}
-                    {{message.sender}}: {{ message.body }}
-                {% endif %}
-            {% endfor%}
-        {% endif %}
-    </textarea><br>
-    <input id="chat-message-input" type="text" size="100"><br>
-    <input id="chat-message-submit" type="button" value="Send">
-    {{ room_name|json_script:'room-name' }}
-    {{ request.user.username|json_script:'username' }}
+	{% block input %}
+		<div class="message-input">
+			<div class="wrap">
+			<input id="chat-message-input" type="text" placeholder="Write your message..." />
+			<i class="fa fa-paperclip attachment" aria-hidden="true"></i>
+			<button id="chat-message-submit" class="submit"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
+			</div>
+		</div>
+	{% endblock input %}
+
+
+    {% block script %}
+	{{ block.super }}
 
     <script>
-        const roomId = {{ room_id }}
-        const userId = {{ request.user.id }}
+        const roomId = {{ room_id }};
+        const userId = {{ request.user.id }};
 
-        const roomName = JSON.parse(document.getElementById('room-name').textContent);
-        const username = JSON.parse(document.getElementById('username').textContent);
+        const roomName = '{{ room_name}}';
+        const username = '{{ username }}';
 
         const chatSocket = new WebSocket(
             'ws://'
@@ -39,15 +30,51 @@
             + '/'
         );
 
+        chatSocket.onopen = function(e){
+        	fetchMessages();
+        };
+
+        function fetchMessages(){
+        	chatSocket.send(JSON.stringify({
+        		'command': 'fetch_messages',
+        		'room_id': roomId
+        	}));
+        };
+
         chatSocket.onmessage = function(e){
             const data = JSON.parse(e.data);
-            let usernameForChat;
-            if (data.username == username){
-                usernameForChat = 'me';
-            }else {
-                usernameForChat = data.username;
+
+            if (data['command'] === 'messages' ){
+            	let messages = data['messages']
+            	for (let i = 0; i < messages.length; i++){
+            		createMessage(messages[i]);
+            	}
+            } else if (data['command'] == 'new_message'){
+				createMessage(data['message']);
             }
-            document.querySelector('#chat-log').value += (usernameForChat +':  '+ data.message + '\n')
+        };
+
+        function createMessage(data){
+            let message = data['body'];
+            let author = data['sender'];
+            let datetime = convertTimestamp(data['published'])
+
+            let msgListTag = document.createElement('li');
+            let imgTag = document.createElement('img');
+			let pTag = document.createElement('p');
+
+            if (author === username){
+                msgListTag.className = 'sent';
+                author = 'me'
+            }else {
+                msgListTag.className = 'replies';
+            }
+            pTag.innerHTML ='<small class="psmall">'+ author+':</small><br>'+ message + '<br><small class="psmall">'+datetime+'</small>';
+            imgTag.src = 'http://emilcarlsson.se/assets/mikeross.png';
+
+            msgListTag.appendChild(imgTag);
+            msgListTag.appendChild(pTag);
+            document.querySelector('#chat-log').appendChild(msgListTag);
         };
 
         chatSocket.onclose = function(e){
@@ -65,6 +92,7 @@
             const messageInputDom = document.querySelector('#chat-message-input');
             const message = messageInputDom.value;
             chatSocket.send(JSON.stringify({
+            	'command': 'new_message',
                 'message': message,
                 'username': username,
                 'room_id': roomId,
@@ -73,6 +101,46 @@
             }));
             messageInputDom.value = '';
         };
+
+        function convertTimestamp(timestamp) {
+        	let datetimeNow = new Date;
+        	const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+			var d = new Date(timestamp * 1000),	// Convert the passed timestamp to milliseconds
+				yyyy = d.getFullYear(),
+				mm = months[d.getMonth()],	// Month name
+				dd = ('0' + d.getDate()).slice(-2),			// Add leading 0.
+				hh = d.getHours(),
+				h = hh,
+				min = ('0' + d.getMinutes()).slice(-2),		// Add leading 0.
+				ampm = 'am',
+				time;
+
+			let diff = (datetimeNow - d) / 3600000;
+
+			if (hh > 12) {
+				h = hh - 12;
+				ampm = 'pm';
+			} else if (hh === 12) {
+				h = 12;
+				ampm = 'pm';
+			} else if (hh == 0) {
+				h = 12;
+			};
+
+			if (diff < 24){
+				time = h + ':' + min + ' ' + ampm;
+			} else if (24 < diff && diff < 8760){
+				time = dd +' ' + mm +' ' + h + ':' + min + ' ' + ampm;
+			} else{
+				time = dd + ' ' + mm + ' ' + yyyy + ' at ' + h + ':' + min + ' ' + ampm;
+			};
+
+			// ie: 2013-02-18, 8:35 am
+
+
+			return time;
+		};
+
     </script>
-</body>
-</html>
+    {% endblock script %}

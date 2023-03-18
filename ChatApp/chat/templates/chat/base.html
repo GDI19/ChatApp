@@ -1,8 +1,12 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html class=''>
+<html lang="en" class=''>
 	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
 		<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 		<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
 		<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
@@ -13,6 +17,8 @@
 
 		<link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css'><link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css'>
 		<link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+		<title>Room Chat</title>
 	</head>
 	<body>
 <!--
@@ -48,11 +54,16 @@ Website: http://emilcarlsson.se/
 				</div>
 			</div>
 		</div>
-		<div id="search">
-			<label for=""><i class="fa fa-search" aria-hidden="true"></i></label>
-			<input type="text" placeholder="Search contacts..." />
+		{# <div id="search"> #}
+		<div id="room-name-input-submit">
+			{# <label for=""><i class="fa fa-search" aria-hidden="true"></i></label> #}
+
+			<input id="room-name-input" type="text" placeholder="Enter the Room Name to chat" />
+			<input id="room-name-submit" type="button" value="OK">
 		</div>
 		<div id="contacts">
+
+			{% block rooms %}
 			<ul>
 				<li class="contact">
 					<div class="wrap">
@@ -85,6 +96,8 @@ Website: http://emilcarlsson.se/
 					</div>
 				</li>
 			</ul>
+			{% endblock rooms %}
+
 		</div>
 		<div id="bottom-bar">
 			<button id="addcontact"><i class="fa fa-user-plus fa-fw" aria-hidden="true"></i> <span>Add contact</span></button>
@@ -93,8 +106,14 @@ Website: http://emilcarlsson.se/
 	</div>
 	<div class="content">
 		<div class="contact-profile">
-			<img src="http://emilcarlsson.se/assets/harveyspecter.png" alt="" />
-			<p>{{ room_name }}</p>
+			<img src="{% static 'img/group_chat_icon.png' %}" alt="" />
+
+			{% if room_name %}
+				<p>{{ room_name }}</p>
+			{% else %}
+				<p>You have not opened a room yet.</p>
+			{% endif %}
+
 			<div class="social-media">
 				<i class="fa fa-facebook" aria-hidden="true"></i>
 				<i class="fa fa-twitter" aria-hidden="true"></i>
@@ -103,6 +122,7 @@ Website: http://emilcarlsson.se/
 		</div>
 		<div class="messages">
 			<ul id="chat-log">
+
 				{% comment %}
 				<li class="sent">
 					<img src="http://emilcarlsson.se/assets/mikeross.png" alt="" />
@@ -113,148 +133,32 @@ Website: http://emilcarlsson.se/
 					<p>When down.</p>
 				</li>
 				{% endcomment %}
+
 			</ul>
 		</div>
-		<div class="message-input">
-			<div class="wrap">
-			<input id="chat-message-input" type="text" placeholder="Write your message..." />
-			<i class="fa fa-paperclip attachment" aria-hidden="true"></i>
-			<button id="chat-message-submit" class="submit"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
-			</div>
-		</div>
+	{% block input %}
+	{% endblock input %}
 	</div>
 </div>
 
 	<script src="{% static 'js/bootstrap.js' %}"></script>
-	<script src="{% static 'js/reconnecting-websocket.js' %}"></script>
+	{# <script src="{% static 'js/reconnecting-websocket.js' %}"></script> #}
 
-    <script>
-        const roomId = {{ room_id }};
-        const userId = {{ request.user.id }};
 
-        const roomName = '{{ room_name}}';
-        const username = '{{ username }}';
+{% block script %}
+	<script>
 
-        const chatSocket = new WebSocket(
-            'ws://'
-            + window.location.host
-            + '/ws/chat/'
-            + roomName
-            + '/'
-        );
-
-        chatSocket.onopen = function(e){
-        	fetchMessages();
-        };
-
-        function fetchMessages(){
-        	chatSocket.send(JSON.stringify({
-        		'command': 'fetch_messages',
-        		'room_id': roomId
-        	}));
-        };
-
-        chatSocket.onmessage = function(e){
-            const data = JSON.parse(e.data);
-
-            if (data['command'] === 'messages' ){
-            	let messages = data['messages']
-            	for (let i = 0; i < messages.length; i++){
-            		createMessage(messages[i]);
-            	}
-            } else if (data['command'] == 'new_message'){
-				createMessage(data['message']);
+        document.querySelector('#room-name-input').onkeyup = function(e) {
+            if (e.keyCode === 13){  // enter, return
+                document.querySelector('#room-name-submit').click();
             }
         };
-
-        function createMessage(data){
-            let message = data['body'];
-            let author = data['sender'];
-            let datetime = convertTimestamp(data['published'])
-
-            let msgListTag = document.createElement('li');
-            let imgTag = document.createElement('img');
-			let pTag = document.createElement('p');
-
-            if (author === username){
-                msgListTag.className = 'sent';
-                author = 'me'
-            }else {
-                msgListTag.className = 'replies';
-            }
-            pTag.innerHTML ='<small class="psmall">'+ author+':</small><br>'+ message + '<br><small class="psmall">'+datetime+'</small>';
-            imgTag.src = 'http://emilcarlsson.se/assets/mikeross.png';
-
-            msgListTag.appendChild(imgTag);
-            msgListTag.appendChild(pTag);
-            document.querySelector('#chat-log').appendChild(msgListTag);
+        document.querySelector('#room-name-submit').onclick = function(e) {
+            var roomName = document.querySelector('#room-name-input').value;
+            window.location.pathname = '/chat/' + roomName + '/';
         };
-
-        chatSocket.onclose = function(e){
-            console.error('Chat socket closed unexpectedly');
-        };
-
-        document.querySelector('#chat-message-input').focus();
-        document.querySelector('#chat-message-input').onkeyup = function(e) {
-            if (e.keyCode === 13) {
-                document.querySelector('#chat-message-submit').click();
-            }
-        };
-
-        document.querySelector('#chat-message-submit').onclick = function(e) {
-            const messageInputDom = document.querySelector('#chat-message-input');
-            const message = messageInputDom.value;
-            chatSocket.send(JSON.stringify({
-            	'command': 'new_message',
-                'message': message,
-                'username': username,
-                'room_id': roomId,
-                'user_id': userId
-
-            }));
-            messageInputDom.value = '';
-        };
-
-        function convertTimestamp(timestamp) {
-        	let datetimeNow = new Date;
-        	const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-
-			var d = new Date(timestamp * 1000),	// Convert the passed timestamp to milliseconds
-				yyyy = d.getFullYear(),
-				mm = months[d.getMonth()],	// Month name
-				dd = ('0' + d.getDate()).slice(-2),			// Add leading 0.
-				hh = d.getHours(),
-				h = hh,
-				min = ('0' + d.getMinutes()).slice(-2),		// Add leading 0.
-				ampm = 'am',
-				time;
-
-			let diff = (datetimeNow - d) / 3600000;
-
-			if (hh > 12) {
-				h = hh - 12;
-				ampm = 'pm';
-			} else if (hh === 12) {
-				h = 12;
-				ampm = 'pm';
-			} else if (hh == 0) {
-				h = 12;
-			};
-
-			if (diff < 24){
-				time = h + ':' + min + ' ' + ampm;
-			} else if (24 < diff && diff < 8760){
-				time = dd +' ' + mm +' ' + h + ':' + min + ' ' + ampm;
-			} else{
-				time = dd + ' ' + mm + ' ' + yyyy + ' at ' + h + ':' + min + ' ' + ampm;
-			};
-
-			// ie: 2013-02-18, 8:35 am
-
-
-			return time;
-		};
-
     </script>
+{% endblock script%}
+
 	</body>
 </html>

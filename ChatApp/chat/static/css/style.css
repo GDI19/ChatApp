@@ -707,3 +707,17 @@ body {
   height: 100%;
   z-index: 1;
 }
+
+#frame{
+    min-height: inherit;
+    min-width: -webkit-fill-available;
+    min-width: -moz-available;
+}
+
+.social-media{
+    padding-right: 20px;
+}
+
+.fa_logout{
+    font-size: 1.0em !important;
+}

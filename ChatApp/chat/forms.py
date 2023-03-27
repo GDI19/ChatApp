@@ -6,4 +6,11 @@ from .models import ChatUser
 class ChatUserRegistrationForm(UserCreationForm):
     class Meta:
         model = ChatUser
-        fields = ["username", "email", "password1", "password2"]
+        fields = ["username","first_name", "last_name", "phone", "email", "password1", "password2"]
+
+
+class ChatUserUpdateProfile(forms.ModelForm):
+    class Meta:
+        model = ChatUser
+        fields = ["first_name", "last_name", "phone", "email"]
+

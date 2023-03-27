@@ -26,7 +26,7 @@
 		<div id="profile">
 			<div class="wrap">
 				<img id="profile-img" src="http://emilcarlsson.se/assets/mikeross.png" class="online" alt="" />
-				<p>{{ request.user.username }}</p>
+				<p>{{ user_profile.username }}</p>
 				<i class="fa fa-chevron-down expand-button" aria-hidden="true"></i>
 				<div id="status-options">
 					<ul>
@@ -37,12 +37,43 @@
 					</ul>
 				</div>
 				<div id="expanded">
+					<!--
 					<label for="twitter"><i class="fa fa-facebook fa-fw" aria-hidden="true"></i></label>
 					<input name="twitter" type="text" value="mikeross" />
 					<label for="twitter"><i class="fa fa-twitter fa-fw" aria-hidden="true"></i></label>
 					<input name="twitter" type="text" value="ross81" />
 					<label for="twitter"><i class="fa fa-instagram fa-fw" aria-hidden="true"></i></label>
 					<input name="twitter" type="text" value="mike.ross" />
+					-->
+					{% if messages %}
+              {% for message in messages %}
+                {{message}}
+              {% endfor %}
+            {% endif %}
+
+            {% if form.errors %}
+                {% for error in form.errors.values %}
+					<p style="color: red">{{ error }}</p>
+                {% endfor %}
+            {% endif %}
+					<form action="" method="post">
+						{% csrf_token %}
+						<label for="first_name"><img class='img_profile' src="{% static 'img/icon_person.svg' %}"></label>
+						<input name="first_name" type="text" placeholder="Name" value="{{user_profile.first_name}}" />
+
+						<label for="last_name"><img class='img_profile bi bi-person' src="{% static 'img/icon_person.svg' %}"></label>
+						<input name="last_name" type="text" placeholder="Last Name" value="{{user_profile.last_name}}" />
+
+						<label for="email"><img class='img_profile' src="{% static 'img/icon_email.svg' %}"></label>
+						<input name="email" type="text" placeholder="E-mail" value="{{user_profile.email}}" />
+
+						<label for="phone"><img class='img_profile' src="{% static 'img/icon_telephone.svg' %}"></label>
+						<input name="phone" type="text" placeholder="Phone" value="{{user_profile.phone}}" />
+
+						<div class="d-grid">
+              			  <button class="btn btn-primary" type="submit">Update</button>
+              			</div>
+					</form>
 				</div>
 			</div>
 		</div>

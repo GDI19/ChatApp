@@ -9,8 +9,8 @@
             {% endif %}
 
             {% if form.errors %}
-                {% for error in form.errors%}
-                    <p style="color: red">{{ error }} is not correct!</p>
+                {% for error in form.errors.values %}
+                    {{ error }}
                 {% endfor %}
             {% endif %}
 
@@ -29,6 +29,11 @@
               <div class="form-floating mb-3">
                 <input type="text" name="last_name" class="form-control" placeholder="Last Name">
                 <label for="floatingInput">Last Name</label>
+              </div>
+
+              <div class="form-floating mb-3">
+                <input type="text" name="phone" required class="form-control" placeholder="Phone number">
+                <label for="floatingInput">Phone</label>
               </div>
 
               <div class="form-floating mb-3">

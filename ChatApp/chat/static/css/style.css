@@ -58,7 +58,7 @@ body {
   }
 }
 #frame #sidepanel #profile.expanded .wrap {
-  height: 210px;
+  height: auto;
   line-height: initial;
 }
 #frame #sidepanel #profile.expanded .wrap p {
@@ -720,4 +720,10 @@ body {
 
 .fa_logout{
     font-size: 1.0em !important;
+}
+
+#frame #sidepanel #profile .wrap img.img_profile{
+    width: 25px;
+    border: none;
+    border-radius: 0%;
 }

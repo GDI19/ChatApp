@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from config import SECRET_KEY
+from config import SECRET_KEY, YANDEX_EMAIL_PASSWORD
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -30,7 +30,35 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'chat',
+
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google', #for google auth
 ]
+
+AUTHENTICATION_BACKENDS = (
+    # used for default signin such as loggin into admin panel
+    'django.contrib.auth.backends.ModelBackend',
+
+    # used for social authentications
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
+
+SITE_ID = 1
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        }
+    }
+}
 
 AUTH_USER_MODEL = 'chat.ChatUser'
 
@@ -110,6 +138,8 @@ USE_TZ = True
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'index'
 
+LOGOUT_REDIRECT_URL = 'login'
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 STATIC_URL = 'static/'
@@ -128,4 +158,17 @@ CHANNEL_LAYERS = {
         },
     },
 }
+
+
+# Emailing settings
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.yandex.ru'
+DEFAULT_FROM_EMAIL = 'gdi.projects@yandex.ru'
+EMAIL_FROM = 'gdi.projects@yandex.ru'
+EMAIL_HOST_USER = 'gdi.projects@yandex.ru'
+EMAIL_HOST_PASSWORD = YANDEX_EMAIL_PASSWORD
+EMAIL_PORT = 465
+EMAIL_USE_SSL = True
+
+PASSWORD_RESET_TIMEOUT = 14400 # in sec 4 hours
 

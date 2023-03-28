@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google', #for google auth
+    'allauth.socialaccount.providers.facebook',  # for facebook auth
 ]
 
 AUTHENTICATION_BACKENDS = (
@@ -48,6 +49,8 @@ AUTHENTICATION_BACKENDS = (
 
 SITE_ID = 1
 
+SOCIALACCOUNT_LOGIN_ON_GET=True # to avoid the intermediate page between my login and social
+
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
         'SCOPE': [
@@ -56,7 +59,8 @@ SOCIALACCOUNT_PROVIDERS = {
         ],
         'AUTH_PARAMS': {
             'access_type': 'online',
-        }
+        },
+        'OAUTH_PKCE_ENABLED': True,
     }
 }
 

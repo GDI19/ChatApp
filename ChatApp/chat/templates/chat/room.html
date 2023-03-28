@@ -20,7 +20,7 @@
         const userId = {{ request.user.id }};
 
         const roomName = '{{ room_name}}';
-        const username = '{{ username }}';
+        const username = '{{ user_profile.username }}';
 
         const chatSocket = new WebSocket(
             'ws://'

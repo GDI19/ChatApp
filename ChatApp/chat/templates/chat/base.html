@@ -25,7 +25,11 @@
 	<div id="sidepanel">
 		<div id="profile">
 			<div class="wrap">
-				<img id="profile-img" src="http://emilcarlsson.se/assets/mikeross.png" class="online" alt="" />
+				{% if user.socialaccount_set.all.0.get_avatar_url %}
+					<img id="profile-img" src="{{ user.socialaccount_set.all.0.get_avatar_url }}" class="online" alt="" />
+				{% else %}
+					<img id="profile-img" src="http://emilcarlsson.se/assets/mikeross.png" class="online" alt="" />
+				{% endif %}
 				<p>{{ user_profile.username }}</p>
 				<i class="fa fa-chevron-down expand-button" aria-hidden="true"></i>
 				<div id="status-options">

@@ -96,6 +96,7 @@ def get_update_profile(request):
     user_profile['profile_form'] = profile_form
     return user_profile
 
+
 def activate_email(request, user, to_email):
     mail_subject = 'Activate your user account.'
     msg_body = render_to_string('template_activate_account.html', {

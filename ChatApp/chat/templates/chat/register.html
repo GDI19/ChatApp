@@ -2,17 +2,13 @@
 {% load static %}
 
 {% block form %}
-            {% if messages %}
-              {% for message in messages %}
-                <p style="color: red">{{message}}</p>
-              {% endfor %}
-            {% endif %}
-
+            {% comment %}
             {% if form.errors %}
                 {% for error in form.errors.values %}
                     {{ error }}
                 {% endfor %}
             {% endif %}
+            {% endcomment %}
 
             <form action="" method="POST">
                 {% csrf_token %}
@@ -33,7 +29,7 @@
 
               <div class="form-floating mb-3">
                 <input type="text" name="phone" required class="form-control" placeholder="Phone number">
-                <label for="floatingInput">Phone</label>
+                <label for="floatingInput"><span class="req">* </span>Phone</label>
               </div>
 
               <div class="form-floating mb-3">

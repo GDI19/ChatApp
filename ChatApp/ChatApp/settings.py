@@ -47,7 +47,7 @@ AUTHENTICATION_BACKENDS = (
     'allauth.account.auth_backends.AuthenticationBackend',
 )
 
-SITE_ID = 1
+SITE_ID = 4
 
 SOCIALACCOUNT_LOGIN_ON_GET=True # to avoid the intermediate page between my login and social
 

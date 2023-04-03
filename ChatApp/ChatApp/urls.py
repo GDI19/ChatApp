@@ -20,6 +20,7 @@ from django.contrib.auth import views as auth_views
 from chat.views import registration, get_update_profile, activate
 
 urlpatterns = [
+    path('', auth_views.LoginView.as_view(template_name='chat/login.html')),
     path('admin/', admin.site.urls),
     path('chat/', include('chat.urls')),
     path('register/', registration, name='register' ),

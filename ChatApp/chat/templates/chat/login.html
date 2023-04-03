@@ -3,14 +3,9 @@
 {% load socialaccount %}
 
 {% block form %}
-            {% if messages %}
-              {% for message in messages %}
-                <p style="color: red">{{message}}</p>
-              {% endfor %}
-            {% endif %}
 
-              {% if form.errors %}
-            <p style="color: red">Your username and password didn't match. Please try again.</p>
+            {% if form.errors %}
+                <p style="color: red">Your username and password didn't match. Please try again.</p>
             {% endif %}
             <form action="" method="POST">
                 {% csrf_token %}

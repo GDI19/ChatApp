@@ -34,6 +34,9 @@ def registration(request):
             # messages.success(request, 'Congratulations! Your account has been created! To enter Chat App you need to login.')
             activate_email(request, user, form.cleaned_data.get('email'))
             return redirect('login')
+        else:
+            for error in list(form.errors.values()):
+                messages.error(request, error)
 
     context = {'form': form}
     return render(request, 'chat/register.html', context)

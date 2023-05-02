@@ -1,7 +1,26 @@
 {% extends 'base.html' %}
 {% load static %}
 
-	{% block input %}
+	{% block chat_messages %}
+        <div class="messages">
+            <div id="div-to-bottom">
+            <ul id="chat-log">
+
+                {% comment %}
+                <li class="sent">
+                    <img src="http://emilcarlsson.se/assets/mikeross.png" alt="" />
+                    <p>How the hell I do?!</p>
+                </li>
+                <li class="replies">
+                    <img src="http://emilcarlsson.se/assets/harveyspecter.png" alt="" />
+                    <p>When down.</p>
+                </li>
+                {% endcomment %}
+
+            </ul>
+            </div>
+        </div>
+
 		<div class="message-input">
 			<div class="wrap">
 			<input id="chat-message-input" type="text" placeholder="Write your message..." />
@@ -9,7 +28,7 @@
 			<button id="chat-message-submit" class="submit"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
 			</div>
 		</div>
-	{% endblock input %}
+	{% endblock chat_messages %}
 
 
     {% block script %}
@@ -30,9 +49,11 @@
             + '/'
         );
 
+
         chatSocket.onopen = function(e){
         	fetchMessages();
         };
+
 
         function fetchMessages(){
         	chatSocket.send(JSON.stringify({
@@ -40,6 +61,13 @@
         		'room_id': roomId
         	}));
         };
+
+
+        function scrollToBottom(){
+            window.scrollTo(0, document.body.scrollHeight);
+			document.querySelector("#div-to-bottom").scrollTop = document.querySelector("#div-to-bottom").scrollHeight;
+        };
+
 
         chatSocket.onmessage = function(e){
             const data = JSON.parse(e.data);
@@ -52,7 +80,10 @@
             } else if (data['command'] == 'new_message'){
 				createMessage(data['message']);
             }
+
+			scrollToBottom();
         };
+
 
         function createMessage(data){
             let message = data['body'];
@@ -77,10 +108,12 @@
             document.querySelector('#chat-log').appendChild(msgListTag);
         };
 
+
         chatSocket.onclose = function(e){
             console.error('Chat socket closed unexpectedly');
         };
 
+        
         document.querySelector('#chat-message-input').focus();
         document.querySelector('#chat-message-input').onkeyup = function(e) {
             if (e.keyCode === 13) {

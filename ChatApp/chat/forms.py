@@ -12,5 +12,5 @@ class ChatUserRegistrationForm(UserCreationForm):
 class ChatUserUpdateProfile(forms.ModelForm):
     class Meta:
         model = ChatUser
-        fields = ["first_name", "last_name", "phone", "email"]
+        fields = ["image", "first_name", "last_name", "phone", "email"]
 

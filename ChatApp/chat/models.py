@@ -1,9 +1,17 @@
+import os
+
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 
 class ChatUser(AbstractUser):
+    def image_upload_to(self, instance=None):
+        if instance:
+            return os.path.join('Users', self.username, instance)
+        return None
+
     phone = models.IntegerField(default=789)
+    image = models.ImageField(default='default/user_avatar.png', upload_to=image_upload_to)
     # class Meta:
     #   verbose_name_plural = 'ChatUsers'
     def __str__(self):

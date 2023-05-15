@@ -74,6 +74,7 @@ def get_update_profile(request):
         'last_name': user.last_name,
         'phone': user.phone,
         'email': user.email,
+        'image': user.image,
     }
 
     profile_form = ChatUserUpdateProfile(request.POST or None, request.FILES, instance=user)
@@ -87,6 +88,7 @@ def get_update_profile(request):
                 'last_name': user.last_name,
                 'phone': user.phone,
                 'email': user.email,
+                'image': user.image,
                 'profile_form': profile_form,
             }
 

@@ -2,6 +2,9 @@ from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
 
+from django.conf import settings
+from django.conf.urls.static import static
+
 from chat.views import registration, get_update_profile, activate
 
 urlpatterns = [
@@ -14,4 +17,4 @@ urlpatterns = [
     path('activate/<uidb64>/<token>/', activate, name='activate'),
     path('accounts/', include('allauth.urls')),
     # path('profile/', get_update_profile , name='user_profile'),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

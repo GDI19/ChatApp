@@ -25,10 +25,12 @@
 	<div id="sidepanel">
 		<div id="profile">
 			<div class="wrap">
-				{% if user.socialaccount_set.all.0.get_avatar_url %}
+				{% if user_profile.image %}
+					<img id="profile-img" src="{{ user_profile.image.url }}" class="online" alt="" />
+				{% elif user.socialaccount_set.all.0.get_avatar_url %}
 					<img id="profile-img" src="{{ user.socialaccount_set.all.0.get_avatar_url }}" class="online" alt="" />
 				{% else %}
-					<img id="profile-img" src="http://emilcarlsson.se/assets/mikeross.png" class="online" alt="" />
+					<img id="profile-img" src="{{ user_profile.image.url }}" class="online" alt="" />
 				{% endif %}
 				<p>{{ user_profile.username }}</p>
 				<i class="fa fa-chevron-down expand-button" aria-hidden="true"></i>
@@ -60,8 +62,11 @@
 					<p style="color: red">{{ error }}</p>
                 {% endfor %}
             {% endif %}
-					<form action="" method="post">
+					<form action="" method="post"  enctype="multipart/form-data">
 						{% csrf_token %}
+						<label for="image"><img class='img_profile' src="{% static 'img/icon_person.svg' %}"></label>
+						<input name="image" type="file" placeholder="Image" src="{{ profile_form.instance.image.url }}" />
+
 						<label for="first_name"><img class='img_profile' src="{% static 'img/icon_person.svg' %}"></label>
 						<input name="first_name" type="text" placeholder="Name" value="{{user_profile.first_name}}" />
 

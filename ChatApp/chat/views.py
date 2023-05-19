@@ -157,11 +157,11 @@ def password_reset_request(request):
                         'uid': urlsafe_base64_encode(force_bytes(user.pk)),
 					    'user': user,
                         'token': default_token_generator.make_token(user),
-    					'protocol': 'http',
+    					'protocol': 'http', # in production change to https
                     }
                     email = render_to_string(email_template_name, context_to_email)
                     try:
-                        send_mail(subject, email, 'admin@example.com',[user.email], fail_silently=False)
+                        send_mail(subject, email, 'gdi.projects@yandex.ru',[user.email], fail_silently=False)
                     except BadHeaderError:
                         return HttpResponse('Invalid header found.')
                     messages.success(request, 'A message with reset password instructions has been sent to your inbox.')

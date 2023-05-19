@@ -1,13 +1,17 @@
 import json
-from django.core.mail import EmailMessage
+from django.core.mail import EmailMessage, send_mail, BadHeaderError
 
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import PasswordResetForm
+from django.contrib.auth.tokens import default_token_generator
+from django.http import HttpResponse
 from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
+from django.db.models.query_utils import Q
 from django.core import serializers
 
 from .forms import ChatUserRegistrationForm, ChatUserUpdateProfile
@@ -136,5 +140,35 @@ def activate(request, uidb64, token):
         messages.error(request, 'Activation link is invalid!')
     return redirect('register')
 
+def password_reset_request(request):
+    if request.method == "POST":
+        password_reset_form = PasswordResetForm(request.POST)
+        if password_reset_form.is_valid():
+            data = password_reset_form.cleaned_data['email']
+            associated_users = ChatUser.objects.filter(Q(email=data))
+            if associated_users.exists():
+                for user in associated_users:
+                    subject = "Password Reset Request"
+                    email_template_name = "chat/password/password_reset_email.txt"
+                    context_to_email = {
+                        'email': user.email,
+                        'domain': '127.0.0.1:8000',
+                        'site_name': 'Group Chat',
+                        'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+					    'user': user,
+                        'token': default_token_generator.make_token(user),
+    					'protocol': 'http',
+                    }
+                    email = render_to_string(email_template_name, context_to_email)
+                    try:
+                        send_mail(subject, email, 'admin@example.com',[user.email], fail_silently=False)
+                    except BadHeaderError:
+                        return HttpResponse('Invalid header found.')
+                    messages.success(request, 'A message with reset password instructions has been sent to your inbox.')
 
+                    return redirect("/password_reset/done/")
+        messages.error(request, 'An invalid email has been entered.')
+    password_reset_form = PasswordResetForm()
+    return render(request=request, template_name="chat/password/password_reset.html",
+                                  context={"password_reset_form": password_reset_form})
 

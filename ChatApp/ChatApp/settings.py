@@ -166,16 +166,18 @@ CHANNEL_LAYERS = {
     },
 }
 
+# Emailing settings for development mail to console
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-# Emailing settings
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.yandex.ru'
-DEFAULT_FROM_EMAIL = 'gdi.projects@yandex.ru'
-EMAIL_FROM = 'gdi.projects@yandex.ru'
-EMAIL_HOST_USER = 'gdi.projects@yandex.ru'
-EMAIL_HOST_PASSWORD = YANDEX_EMAIL_PASSWORD
-EMAIL_PORT = 465
-EMAIL_USE_SSL = True
-
-PASSWORD_RESET_TIMEOUT = 14400 # in sec 4 hours
+# Emailing settings like for production
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.yandex.ru'
+# DEFAULT_FROM_EMAIL = 'gdi.projects@yandex.ru'
+# EMAIL_FROM = 'gdi.projects@yandex.ru'
+# EMAIL_HOST_USER = 'gdi.projects@yandex.ru'
+# EMAIL_HOST_PASSWORD = YANDEX_EMAIL_PASSWORD
+# EMAIL_PORT = 465
+# EMAIL_USE_SSL = True
+#
+# PASSWORD_RESET_TIMEOUT = 14400 # in sec 4 hours
 
